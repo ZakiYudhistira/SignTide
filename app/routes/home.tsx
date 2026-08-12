@@ -1,13 +1,12 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
-
+import { WelcomeCarousel } from "~/components/onboarding/welcome-carousel";
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "SignTide" },
+    { name: "description", content: "SignTide mobile application" },
   ];
 }
 
 export default function Home() {
-  return <Welcome />;
+  return <WelcomeCarousel />;
 }

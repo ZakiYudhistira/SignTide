@@ -3,6 +3,40 @@
 @theme {
   --font-sans: "Asap", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-bubblelemon: "BubbleLemonDemoRegular", cursive;
+  --font-bubblelemon-outline: "BubbleLemonDemoOutline", cursive;
+  /* Typography scale */
+  --text-display: clamp(2.25rem, 10vw, 3.25rem);
+  --text-display--line-height: 1;
+  --text-display--font-weight: 400;
+
+  --text-heading: clamp(1.75rem, 7vw, 2.5rem);
+  --text-heading--line-height: 1.1;
+  --text-heading--font-weight: 700;
+
+  --text-title: clamp(1.25rem, 5vw, 1.5rem);
+  --text-title--line-height: 1.25;
+  --text-title--font-weight: 700;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.5;
+  --text-body--font-weight: 400;
+
+  --text-body-large: 1.125rem;
+  --text-body-large--line-height: 1.5;
+  --text-body-large--font-weight: 400;
+
+  --text-label: 0.875rem;
+  --text-label--line-height: 1.25;
+  --text-label--font-weight: 600;
+
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.25;
+  --text-caption--font-weight: 400;
+
+  --text-button: 1.125rem;
+  --text-button--line-height: 1.25;
+  --text-button--font-weight: 700;
 
   --color-ocean: #1d87cb;
   --color-biru-2: #3a97d3;
@@ -32,11 +66,34 @@
   --color-light-blue: rgb(118 188 233 / 0.3);
 }
 
+@font-face {
+  font-family: "BubbleLemonDemoRegular";
+  src: url("/BubbleLemonDemoRegular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BubbleLemonDemoOutline";
+  src: url("/BubbleLemonDemoOutline.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+  background: var(--color-background);
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+body {
+  color: var(--color-navy-1);
+}
+
+@utility welcoming-button {
+  @apply w-full rounded-3xl border-2 border-ocean bg-blue-3 px-6 py-4 text-button text-white transition-colors hover:bg-biru-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean;
 }
