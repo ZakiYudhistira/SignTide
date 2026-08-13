@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router";
 
 import { supabase } from "~/lib/supabase/client";
+import { LoadingScreen } from "~/components/ui/loading-screen";
 
 type AuthenticatedRouteProps = {
   children: ReactNode;
@@ -50,11 +51,7 @@ export function AuthenticatedRoute({ children }: AuthenticatedRouteProps) {
   }, [navigate]);
 
   if (isCheckingAuth) {
-    return (
-      <div className="flex min-h-0 flex-1 items-center justify-center px-6">
-        <p className="text-body text-navy-3">Memeriksa sesi...</p>
-      </div>
-    );
+    return <LoadingScreen show />;
   }
 
   return children;

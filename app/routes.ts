@@ -7,7 +7,9 @@ export default [
   ]),
   layout("routes/protected-layout.tsx", [
     route("level", "routes/level.tsx"),
+    route("dictionary", "routes/dictionary.tsx"),
     route("profile", "routes/profile.tsx"),
+    route("leaderboard", "routes/leaderboard.tsx"),
   ]),
   layout("routes/protected-no-nav-layout.tsx", [
     route("profile/edit", "routes/edit-profile.tsx"),
