@@ -18,12 +18,15 @@ export function createClient(request: Request) {
             value: string;
           }[];
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet, responseHeaders) {
           cookiesToSet.forEach(({ name, value, options }) =>
             headers.append(
               "Set-Cookie",
               serializeCookieHeader(name, value, options)
             )
+          );
+          Object.entries(responseHeaders).forEach(([name, value]) =>
+            headers.set(name, value)
           );
         },
       },

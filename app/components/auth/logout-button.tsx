@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 
 import { supabase } from "~/lib/supabase/client";
+import { invalidateProfileCache } from "~/features/profile/profile.client";
 
 export function LogoutButton() {
   const navigate = useNavigate();
@@ -22,13 +23,14 @@ export function LogoutButton() {
       return;
     }
 
+    invalidateProfileCache();
     navigate("/login", { replace: true });
   };
 
   return (
-    <div className="w-full max-w-xs">
+    <div className="w-full">
       <button
-        className="welcoming-button"
+        className="destructive"
         type="button"
         disabled={isLoggingOut}
         onClick={handleLogout}

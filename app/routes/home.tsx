@@ -1,4 +1,5 @@
 import type { Route } from "./+types/home";
+import { UnauthenticatedRoute } from "~/components/auth/unauthenticated-route";
 import { WelcomeCarousel } from "~/components/onboarding/welcome-carousel";
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,5 +9,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  return <WelcomeCarousel />;
+  return (
+    <UnauthenticatedRoute authenticatedRedirectTo="/level">
+      <WelcomeCarousel />
+    </UnauthenticatedRoute>
+  );
 }

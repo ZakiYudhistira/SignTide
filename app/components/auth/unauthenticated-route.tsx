@@ -5,9 +5,13 @@ import { supabase } from "~/lib/supabase/client";
 
 type UnauthenticatedRouteProps = {
   children: ReactNode;
+  authenticatedRedirectTo?: string;
 };
 
-export function UnauthenticatedRoute({ children }: UnauthenticatedRouteProps) {
+export function UnauthenticatedRoute({
+  children,
+  authenticatedRedirectTo = "/level",
+}: UnauthenticatedRouteProps) {
   const navigate = useNavigate();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
@@ -16,7 +20,7 @@ export function UnauthenticatedRoute({ children }: UnauthenticatedRouteProps) {
 
     const redirectToDashboard = () => {
       if (isMounted) {
-        navigate("/dashboard", { replace: true });
+        navigate(authenticatedRedirectTo, { replace: true });
       }
     };
 
@@ -47,7 +51,7 @@ export function UnauthenticatedRoute({ children }: UnauthenticatedRouteProps) {
       isMounted = false;
       authSubscription.subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [authenticatedRedirectTo, navigate]);
 
   if (isCheckingAuth) {
     return (

@@ -57,7 +57,7 @@ export function AuthForm() {
       return;
     }
 
-    navigate("/dashboard", { replace: true });
+    navigate("/level", { replace: true });
   };
 
   const toggleRegisterMode = () => {
