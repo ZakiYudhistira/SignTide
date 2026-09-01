@@ -1,35 +1,38 @@
-import { DictionaryCell, type DictionaryCellColor } from "./dictionary-cell";
+import { useCallback, useState } from "react";
 
-const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-const words = [
-  "Saya", "Kamu", "Nama", "Siapa", "Guru", "Siswa", "Teman", "Kelas",
-  "Halo", "Selamat Pagi", "Terimakasih", "Maaf", "Permisi", "Sampai Jumpa",
-  "Umur", "Tinggal", "Sekolah", "Alamat", "Asal", "Suka", "Tidak Suka",
-  "Hobi", "Membaca", "Bermain",
-];
-const affixes = ["Ber-", "Me-", "Di-", "Se-", "Ke-", "Pe-", "Ter-", "-I", "-An", "-Nya", "-Kan"];
+import type {
+  DictionaryEntry,
+  DictionarySection as DictionarySectionData,
+} from "~/models/dictionary";
 
-function Section({ title, items, color }: { title: string; items: string[]; color: DictionaryCellColor }) {
-  return (
-    <section className="mt-8 border-t-4 border-[#ffd278] pt-3">
-      <h2 className="mb-4 text-heading-small text-navy-1">{title}</h2>
-      <div className="grid grid-cols-4 gap-x-4 gap-y-6 sm:grid-cols-5">
-        {items.map((item) => <DictionaryCell key={item} label={item} color={color} />)}
-      </div>
-    </section>
-  );
-}
+import { DictionaryEntryPopup } from "./dictionary-entry-popup";
+import { DictionarySection } from "./dictionary-section";
 
-export function DictionaryPage() {
+const sectionColors = ["blue", "sky", "yellow"] as const;
+
+export function DictionaryPage({ sections }: { sections: DictionarySectionData[] }) {
+  const [selectedEntry, setSelectedEntry] = useState<DictionaryEntry | null>(null);
+  const closePopup = useCallback(() => setSelectedEntry(null), []);
+
   return (
     <div className="min-h-full bg-background px-5 pb-32 pt-8">
       <header className="text-center">
         <h1 className="text-heading text-navy-1">Ayo Belajar SIBI!</h1>
         <p className="mt-2 text-title text-ocean">Panduan Menghafal Materi SignTide!</p>
       </header>
-      <Section title="Alphabet" items={alphabet} color="blue" />
-      <Section title="Kata" items={words} color="blue" />
-      <Section title="Kata Imbuhan" items={affixes} color="sky" />
+
+      {sections.map((section, index) => (
+        <DictionarySection
+          key={section.id}
+          section={section}
+          color={sectionColors[index % sectionColors.length]}
+          onSelectEntry={setSelectedEntry}
+        />
+      ))}
+
+      {selectedEntry && (
+        <DictionaryEntryPopup entry={selectedEntry} onClose={closePopup} />
+      )}
     </div>
   );
 }

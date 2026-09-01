@@ -1,0 +1,30 @@
+{
+  "Alfabet": {
+    "A": "alphabet/SIBI_A.png",
+    "B": "alphabet/SIBI_B.png",
+    "C": "alphabet/SIBI_C.png",
+    "D": "alphabet/SIBI_D.png",
+    "E": "alphabet/SIBI_E.png",
+    "F": "alphabet/SIBI_F.png",
+    "G": "alphabet/SIBI_G.png",
+    "H": "alphabet/SIBI_H.png",
+    "I": "alphabet/SIBI_I.png",
+    "J": "alphabet/SIBI_J.png",
+    "K": "alphabet/SIBI_K.png",
+    "L": "alphabet/SIBI_L.png",
+    "M": "alphabet/SIBI_M.png",
+    "N": "alphabet/SIBI_N.png",
+    "O": "alphabet/SIBI_O.png",
+    "P": "alphabet/SIBI_P.png",
+    "Q": "alphabet/SIBI_Q.png",
+    "R": "alphabet/SIBI_R.png",
+    "S": "alphabet/SIBI_S.png",
+    "T": "alphabet/SIBI_T.png",
+    "U": "alphabet/SIBI_U.png",
+    "V": "alphabet/SIBI_V.png",
+    "W": "alphabet/SIBI_W.png",
+    "X": "alphabet/SIBI_X.png",
+    "Y": "alphabet/SIBI_Y.png",
+    "Z": "alphabet/SIBI_Z.png"
+  }
+}

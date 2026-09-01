@@ -14,4 +14,7 @@ export default [
   layout("routes/protected-no-nav-layout.tsx", [
     route("profile/edit", "routes/edit-profile.tsx"),
   ]),
+  layout("routes/protected-level-layout.tsx", [
+    route("level/:levelId", "routes/level-section-1-lvl-1.tsx"),
+  ]),
 ] satisfies RouteConfig;

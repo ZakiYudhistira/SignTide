@@ -4,6 +4,7 @@ export type LeaderboardEntry = {
   userId: string;
   username: string;
   xp: number;
+  avatarUrl: string | null;
 };
 
 const DEFAULT_LEADERBOARD_LIMIT = 15;
@@ -37,7 +38,7 @@ export async function getLeaderboard(): Promise<{
 
   const { data, error } = await supabase
     .from("exp_view")
-    .select("UID, username, xp")
+    .select("UID, username, xp, avatar_path")
     .order("xp", { ascending: false })
     .order("username", { ascending: true })
     .limit(getLeaderboardLimit());
@@ -55,6 +56,9 @@ export async function getLeaderboard(): Promise<{
       userId: entry.UID,
       username: entry.username ?? "User",
       xp: Number(entry.xp ?? 0),
+      avatarUrl: entry.avatar_path
+        ? supabase.storage.from("avatars").getPublicUrl(entry.avatar_path).data.publicUrl
+        : null,
     })),
   };
 }

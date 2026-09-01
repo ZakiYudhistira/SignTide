@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
 
 import { supabase } from "~/lib/supabase/client";
+import { recordAuthenticatedLogin } from "~/features/auth/login-streak.client";
 import { AuthField } from "./auth-field";
 
 export function AuthForm() {
@@ -55,6 +56,19 @@ export function AuthForm() {
         "Akun berhasil dibuat. Silakan periksa email untuk konfirmasi akun.",
       );
       return;
+    }
+
+    if (!isRegistering) {
+      try {
+        await recordAuthenticatedLogin();
+      } catch (error) {
+        setAuthError(
+          error instanceof Error
+            ? error.message
+            : "Streak login tidak dapat diperbarui.",
+        );
+        return;
+      }
     }
 
     navigate("/level", { replace: true });

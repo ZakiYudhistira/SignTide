@@ -105,10 +105,9 @@ export function EditProfilePage({ profile }: EditProfilePageProps) {
       setUsername(updatedUsername);
       setNameOpen(false);
     } catch (saveError) {
+      console.error("Username update failed", saveError);
       setFormError(
-        saveError instanceof Error
-          ? saveError.message
-          : "Nama tidak berhasil diperbarui.",
+        "Oops, pembuatan username gagal. Pastikan kamu terkoneksi dengan jaringan atau coba gunakan username lain yaa.",
       );
     } finally {
       setIsSavingName(false);

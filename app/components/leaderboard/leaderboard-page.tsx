@@ -41,6 +41,20 @@ export function LeaderboardPage({ entries, currentUserId }: LeaderboardPageProps
               ) : (
                 <span className="w-10 text-center">{index + 1}.</span>
               )}
+              {entry.avatarUrl ? (
+                <img
+                  src={entry.avatarUrl}
+                  alt=""
+                  className="size-11 shrink-0 rounded-full object-cover"
+                />
+              ) : (
+                <span
+                  className="flex size-11 shrink-0 items-center justify-center rounded-full bg-light-blue text-body-large font-bold"
+                  aria-hidden="true"
+                >
+                  {entry.username.charAt(0).toUpperCase()}
+                </span>
+              )}
               <span className="min-w-0 flex-1 truncate">{entry.username}</span>
               <span className="shrink-0 text-body-large font-semibold">
                 {entry.xp.toLocaleString("en-US")} XP

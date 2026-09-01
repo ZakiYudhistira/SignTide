@@ -1,4 +1,5 @@
 import { DictionaryPage } from "~/components/dictionary/dictionary-page";
+import { getDictionarySections } from "~/features/dictionary/dictionary.server";
 
 import type { Route } from "./+types/dictionary";
 
@@ -9,6 +10,10 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Dictionary() {
-  return <DictionaryPage />;
+export function loader() {
+  return { sections: getDictionarySections() };
+}
+
+export default function Dictionary({ loaderData }: Route.ComponentProps) {
+  return <DictionaryPage sections={loaderData.sections} />;
 }
