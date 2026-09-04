@@ -1,4 +1,4 @@
-import type { LessonNodeConfig, MapDecorationData } from "~/models/learning";
+import type { ActCookingConfig, LessonNodeConfig, MapDecorationData } from "~/models/learning";
 
 export const ACT_ONE_ID = "section-1";
 
@@ -15,6 +15,7 @@ export const actOneLessons: LessonNodeConfig[] = [
     icon: "/Levels/active.png",
     iconAlt: "Available lesson with sun icon",
     reward: {
+      name: "bread",
       image: "/quest/bread.png",
       alt: "Bread reward",
       offsetX: 50,
@@ -44,6 +45,7 @@ export const actOneLessons: LessonNodeConfig[] = [
     icon: "/Levels/inactive.png",
     iconAlt: "Locked lesson with moon icon",
     reward: {
+      name: "veggies",
       image: "/quest/veggies.png",
       alt: "Vegetable reward",
       offsetX: 54,
@@ -73,6 +75,7 @@ export const actOneLessons: LessonNodeConfig[] = [
     icon: "/Levels/inactive.png",
     iconAlt: "Locked lesson with moon icon",
     reward: {
+      name: "meat",
       image: "/quest/meat.png",
       alt: "Meat reward",
       offsetX: 54,
@@ -81,6 +84,15 @@ export const actOneLessons: LessonNodeConfig[] = [
     },
   },
 ];
+
+export const actOneCooking: ActCookingConfig = {
+  sectionId: ACT_ONE_ID,
+  requiredItems: actOneLessons.flatMap((lesson) =>
+    lesson.reward ? [lesson.reward.name] : [],
+  ),
+  resultImage: "/quest/sandwich.png",
+  resultAlt: "Sandwich yang telah selesai dimasak",
+};
 
 export const actOneDecorations: MapDecorationData[] = [
   {

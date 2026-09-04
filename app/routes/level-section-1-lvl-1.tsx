@@ -7,9 +7,12 @@ import { LevelPage } from "~/components/levels/level-page";
 import { LevelSummary } from "~/components/levels/level-summary";
 import {
   getPublicLevelByIdentifier,
+  getLevelRewardName,
+  gradeLevelProblem,
   validateLevelAnswers,
   type SubmittedAnswers,
 } from "~/features/levels/level-session.server";
+import type { LevelActionData } from "~/models/level";
 import { ACT_ONE_ID, actOneLessons } from "~/data/learning/act-one";
 import {
   canAccessLesson,
@@ -67,6 +70,42 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 export async function action({ request, params }: Route.ActionArgs) {
   const formData = await request.formData();
+  const intent = formData.get("_intent");
+
+  const { progression, headers } = await getUserProgression(request);
+  const lessons = deriveLessonStatuses(ACT_ONE_ID, actOneLessons, progression);
+
+  if (!canAccessLesson(params.levelId, lessons)) {
+    throw new Response(null, {
+      status: 302,
+      headers: { Location: "/level", ...Object.fromEntries(headers) },
+    });
+  }
+
+  if (intent === "grade-problem") {
+    const problemId = formData.get("problemId");
+    const choiceId = formData.get("choiceId");
+
+    if (typeof problemId !== "string" || typeof choiceId !== "string") {
+      throw new Response("Invalid problem answer", { status: 400 });
+    }
+
+    const grade = gradeLevelProblem(params.levelId, problemId, choiceId);
+
+    if (!grade) {
+      throw new Response("Invalid problem answer", { status: 400 });
+    }
+
+    return data<LevelActionData>(
+      { intent: "grade-problem", grade },
+      { headers },
+    );
+  }
+
+  if (intent !== "finish-level") {
+    throw new Response("Invalid level action", { status: 400 });
+  }
+
   const answers = parseSubmittedAnswers(formData.get("answers"));
 
   if (!answers) {
@@ -85,29 +124,26 @@ export async function action({ request, params }: Route.ActionArgs) {
     });
   }
 
-  const { progression, headers } = await getUserProgression(request);
-  const lessons = deriveLessonStatuses(ACT_ONE_ID, actOneLessons, progression);
-
-  if (!canAccessLesson(params.levelId, lessons)) {
-    throw new Response(null, {
-      status: 302,
-      headers: { Location: "/level", ...Object.fromEntries(headers) },
-    });
-  }
-
   if (result.score === result.total) {
     const completion = await markLevelCompleted(
       request,
       ACT_ONE_ID,
       params.levelId,
+      getLevelRewardName(params.levelId),
     );
     return data(
-      { ...result, xpAwarded: completion.xpAwarded },
+      {
+        intent: "finish-level",
+        result: { ...result, xpAwarded: completion.xpAwarded },
+      } satisfies LevelActionData,
       { headers: completion.headers },
     );
   }
 
-  return data(result, { headers });
+  return data<LevelActionData>(
+    { intent: "finish-level", result },
+    { headers },
+  );
 }
 
 export function meta({ loaderData }: Route.MetaArgs) {
@@ -131,8 +167,8 @@ export function ErrorBoundary() {
 }
 
 export default function LevelSessionRoute({ loaderData, actionData }: Route.ComponentProps) {
-  if (actionData) {
-    return <LevelSummary result={actionData} />;
+  if (actionData?.intent === "finish-level") {
+    return <LevelSummary result={actionData.result} />;
   }
 
   return <LevelPage level={loaderData.level} />;

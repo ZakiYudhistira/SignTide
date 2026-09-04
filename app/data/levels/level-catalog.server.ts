@@ -1,7 +1,11 @@
 import type {
   ImageMultipleChoice,
   ImageMultipleProblem,
+  ImagePromptMultipleChoiceProblem,
   LevelDefinition,
+  MultipleChoice,
+  MultipleChoiceProblem,
+  RewardItemName,
 } from "~/models/level";
 import { learningAssetUrl } from "~/utils/learning-asset.server";
 
@@ -9,9 +13,30 @@ export type ScoredImageMultipleProblem = ImageMultipleProblem & {
   correctChoiceId: string;
 };
 
-export type ScoredLevelDefinition = Omit<LevelDefinition, "problems"> & {
-  problems: [ScoredImageMultipleProblem, ...ScoredImageMultipleProblem[]];
+export type ScoredMultipleChoiceProblem = MultipleChoiceProblem & {
+  correctChoiceId: string;
 };
+
+export type ScoredImagePromptMultipleChoiceProblem =
+  ImagePromptMultipleChoiceProblem & {
+    correctChoiceId: string;
+  };
+
+export type ScoredLevelProblem =
+  | ScoredImageMultipleProblem
+  | ScoredMultipleChoiceProblem
+  | ScoredImagePromptMultipleChoiceProblem;
+
+export type ScoredLevelDefinition = Omit<LevelDefinition, "problems"> & {
+  problems: [ScoredLevelProblem, ...ScoredLevelProblem[]];
+  reward?: { name: RewardItemName };
+};
+
+export function defineLevel<TProblems extends [ScoredLevelProblem, ...ScoredLevelProblem[]]>(
+  level: Omit<LevelDefinition, "problems"> & { problems: TProblems },
+) {
+  return level;
+}
 
 function alphabetChoice(letter: string): ImageMultipleChoice {
   const uppercaseLetter = letter.toUpperCase();
@@ -31,7 +56,7 @@ const alphabetChoices = Array.from({ length: 26 }, (_, index) =>
   alphabetChoice(String.fromCharCode(97 + index)),
 );
 
-function shuffleChoices(choices: readonly ImageMultipleChoice[], seed: string) {
+function shuffleChoices<T>(choices: readonly T[], seed: string): T[] {
   const shuffled = [...choices];
   let state = [...seed].reduce(
     (hash, character) => (hash * 31 + character.charCodeAt(0)) >>> 0,
@@ -48,6 +73,10 @@ function shuffleChoices(choices: readonly ImageMultipleChoice[], seed: string) {
   }
 
   return shuffled;
+}
+
+function alphabetTextChoice(letter: string): MultipleChoice {
+  return { id: letter.toLowerCase(), label: letter.toUpperCase() };
 }
 
 function alphabetProblem(
@@ -80,17 +109,50 @@ function alphabetProblem(
   };
 }
 
+function alphabetImagePromptProblem(
+  letter: string,
+  levelLetters: string,
+  levelId: string,
+): ScoredImagePromptMultipleChoiceProblem {
+  const availableChoices = levelLetters.split("").map(alphabetTextChoice);
+  const distractors = shuffleChoices(
+    availableChoices.filter((choice) => choice.id !== letter),
+    `${levelId}-text-distractors-${letter}`,
+  );
+  const choices = shuffleChoices(
+    [alphabetTextChoice(letter), ...distractors.slice(0, 3)],
+    `${levelId}-text-choices-${letter}`,
+  );
+  const uppercaseLetter = letter.toUpperCase();
+
+  return {
+    id: `name-${levelId}-${letter}`,
+    type: "image-prompt-multiple-choice",
+    prompt: "Huruf apakah ini?",
+    promptVisual: {
+      kind: "image",
+      src: learningAssetUrl(`alphabet/SIBI_${uppercaseLetter}.png`),
+      alt: `Isyarat tangan untuk huruf ${uppercaseLetter}`,
+    },
+    choices,
+    correctChoiceId: letter,
+  };
+}
+
 export const levelCatalog = {
   "section-1-lvl-1": {
     id: "section-1-lvl-1",
     title: "Huruf A-E",
     description: "Mengenal isyarat dasar untuk huruf A sampai E.",
     lives: 5,
+    reward: { name: "bread" },
     problems: [
-      ..."abcde".split("").map((letter) =>
+      alphabetProblem("a", "abcde", "section-1-lvl-1"),
+      ..."bcd".split("").map((letter) =>
         alphabetProblem(letter, "abcde", "section-1-lvl-1"),
-      ) as [ScoredImageMultipleProblem, ...ScoredImageMultipleProblem[]],
-    ],
+      ),
+      alphabetImagePromptProblem("e", "abcde", "section-1-lvl-1"),
+    ] as [ScoredLevelProblem, ...ScoredLevelProblem[]],
   },
   "section-1-lvl-2": {
     id: "section-1-lvl-2",
@@ -106,6 +168,7 @@ export const levelCatalog = {
     title: "Huruf K-O",
     description: "Mengenal isyarat dasar untuk huruf K sampai O.",
     lives: 5,
+    reward: { name: "veggies" },
     problems: "klmno".split("").map((letter) =>
       alphabetProblem(letter, "klmno", "section-1-lvl-3"),
     ) as [ScoredImageMultipleProblem, ...ScoredImageMultipleProblem[]],
@@ -124,6 +187,7 @@ export const levelCatalog = {
     title: "Huruf U-Z",
     description: "Mengenal isyarat dasar untuk huruf U sampai Z.",
     lives: 5,
+    reward: { name: "meat" },
     problems: "uvwxyz".split("").map((letter) =>
       alphabetProblem(letter, "uvwxyz", "section-1-lvl-5"),
     ) as [ScoredImageMultipleProblem, ...ScoredImageMultipleProblem[]],

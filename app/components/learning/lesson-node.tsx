@@ -53,7 +53,9 @@ export function LessonNode({ lesson, isSelected, onSelect }: LessonNodeProps) {
 
       {lesson.reward && (
         <img
-          className="pointer-events-none absolute z-20 h-auto object-contain"
+          className={`pointer-events-none absolute z-20 h-auto object-contain transition-[filter,opacity] duration-300 ${
+            isCompleted ? "grayscale-0 opacity-100" : "grayscale opacity-70"
+          }`}
           style={{
             left: `${lesson.reward.offsetX}%`,
             top: `${lesson.reward.offsetY}%`,

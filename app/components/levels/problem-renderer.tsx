@@ -1,13 +1,17 @@
 import type { ComponentType } from "react";
 
-import type { LevelProblem } from "~/models/level";
+import type { LevelProblem, ProblemGrade } from "~/models/level";
 
 import { ImageMultipleProblem } from "./image-multiple-problem";
+import { ImagePromptMultipleChoiceProblem } from "./image-prompt-multiple-choice-problem";
+import { MultipleChoiceProblem } from "./multiple-choice-problem";
 
 type ProblemRendererProps = {
   problem: LevelProblem;
   selectedChoiceId: string | null;
   onSelectChoice: (choiceId: string) => void;
+  grade: ProblemGrade | null;
+  disabled: boolean;
 };
 
 type SharedRendererProps = Omit<ProblemRendererProps, "problem">;
@@ -22,16 +26,19 @@ type ProblemRendererRegistry = {
 
 const problemRenderers = {
   "image-multiple": ImageMultipleProblem,
+  "multiple-choice": MultipleChoiceProblem,
+  "image-prompt-multiple-choice": ImagePromptMultipleChoiceProblem,
 } satisfies ProblemRendererRegistry;
 
-export function ProblemRenderer({ problem, selectedChoiceId, onSelectChoice }: ProblemRendererProps) {
-  const Renderer = problemRenderers[problem.type];
+export function ProblemRenderer({ problem, selectedChoiceId, onSelectChoice, grade, disabled }: ProblemRendererProps) {
+  const sharedProps = { selectedChoiceId, onSelectChoice, grade, disabled };
 
-  return (
-    <Renderer
-      problem={problem}
-      selectedChoiceId={selectedChoiceId}
-      onSelectChoice={onSelectChoice}
-    />
-  );
+  switch (problem.type) {
+    case "image-multiple":
+      return <ImageMultipleProblem problem={problem} {...sharedProps} />;
+    case "multiple-choice":
+      return <MultipleChoiceProblem problem={problem} {...sharedProps} />;
+    case "image-prompt-multiple-choice":
+      return <ImagePromptMultipleChoiceProblem problem={problem} {...sharedProps} />;
+  }
 }

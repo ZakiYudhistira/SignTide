@@ -16,8 +16,33 @@ export type ImageMultipleProblem = {
   choices: ImageMultipleChoice[];
 };
 
+export type MultipleChoice = {
+  id: string;
+  label: string;
+};
+
+export type MultipleChoiceProblem = {
+  id: string;
+  type: "multiple-choice";
+  eyebrow?: string;
+  prompt: string;
+  choices: MultipleChoice[];
+};
+
+export type ImagePromptMultipleChoiceProblem = {
+  id: string;
+  type: "image-prompt-multiple-choice";
+  eyebrow?: string;
+  prompt: string;
+  promptVisual: ChoiceVisual;
+  choices: MultipleChoice[];
+};
+
 // Extend this union when another problem template is introduced.
-export type LevelProblem = ImageMultipleProblem;
+export type LevelProblem =
+  | ImageMultipleProblem
+  | MultipleChoiceProblem
+  | ImagePromptMultipleChoiceProblem;
 
 export type LevelDefinition = {
   id: string;
@@ -27,8 +52,22 @@ export type LevelDefinition = {
   problems: [LevelProblem, ...LevelProblem[]];
 };
 
+export type RewardItemName = "bread" | "veggies" | "meat";
+
 export type LevelResult = {
   score: number;
   total: number;
   xpAwarded?: number;
 };
+
+export type ProblemGrade = {
+  problemId: string;
+  selectedChoiceId: string;
+  correctChoiceId: string;
+  correctAnswerLabel: string;
+  isCorrect: boolean;
+};
+
+export type LevelActionData =
+  | { intent: "grade-problem"; grade: ProblemGrade }
+  | { intent: "finish-level"; result: LevelResult };
