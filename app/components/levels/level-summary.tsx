@@ -2,7 +2,17 @@ import { Link } from "react-router";
 
 import type { LevelResult } from "~/models/level";
 
-export function LevelSummary({ result }: { result: LevelResult }) {
+type LevelSummaryReward = {
+  image: string;
+  alt: string;
+};
+
+type LevelSummaryProps = {
+  result: LevelResult;
+  reward?: LevelSummaryReward;
+};
+
+export function LevelSummary({ result, reward }: LevelSummaryProps) {
   const isPerfectScore = result.score === result.total;
 
   return (
@@ -22,11 +32,29 @@ export function LevelSummary({ result }: { result: LevelResult }) {
           : "Tetap semangat! Coba lagi untuk mendapatkan semua jawaban benar."}
       </p>
       {isPerfectScore && (
-        <p className="mt-3 text-body text-yellow-2">
-          {result.xpAwarded
-            ? `+${result.xpAwarded} XP diperoleh`
-            : "Level ini sudah pernah diselesaikan"}
-        </p>
+        <>
+          <p className="mt-3 text-body text-yellow-2">
+            {result.xpAwarded
+              ? `+${result.xpAwarded} XP diperoleh`
+              : "Level ini sudah pernah diselesaikan"}
+          </p>
+
+          {reward && (
+            <section
+              aria-label={`Mendapatkan ${reward.alt}`}
+              className="mt-5 flex items-center justify-center gap-3 rounded-3xl bg-orange-3/35 px-5 py-3"
+            >
+              <span className="text-body-large font-bold text-orange-2">
+                Mendapatkan
+              </span>
+              <img
+                src={reward.image}
+                alt={reward.alt}
+                className="size-20 object-contain drop-shadow-md"
+              />
+            </section>
+          )}
+        </>
       )}
       <Link
         to="/level"

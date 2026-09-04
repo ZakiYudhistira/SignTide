@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 
-import { actOneDecorations } from "~/data/learning/act-one";
-import { mapPosition, MAP_HEIGHT, MAP_WIDTH } from "~/lib/learning/map-position";
-import type { LessonNodeData } from "~/models/learning";
+import { mapPosition } from "~/lib/learning/map-position";
+import type { ActMapConfig, LessonNodeData } from "~/models/learning";
 
 import { LessonNode } from "./lesson-node";
 import { LessonPopup } from "./lesson-popup";
 import { MapDecoration } from "./map-decoration";
 
-export function SkillMap({ lessons }: { lessons: LessonNodeData[] }) {
+export function SkillMap({ lessons, map }: { lessons: LessonNodeData[]; map: ActMapConfig }) {
   const navigate = useNavigate();
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
   const mapRef = useRef<HTMLElement>(null);
@@ -49,15 +48,18 @@ export function SkillMap({ lessons }: { lessons: LessonNodeData[] }) {
         }
       }}
     >
-      <div className="relative aspect-[390/1050] w-full overflow-visible">
+      <div
+        className="relative w-full overflow-visible"
+        style={{ aspectRatio: `${map.width} / ${map.height}` }}
+      >
         <svg
           className="pointer-events-none absolute inset-0 z-0 size-full"
-          viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
+          viewBox={`0 0 ${map.width} ${map.height}`}
           preserveAspectRatio="none"
           aria-hidden="true"
         >
           <path
-            d="M245 135 C150 145 315 240 115 330 C20 375 65 465 225 530 C365 590 380 655 300 720 C220 790 330 850 145 910"
+            d={map.path}
             fill="none"
             stroke="var(--color-gray-2)"
             strokeDasharray="9 8"
@@ -66,15 +68,15 @@ export function SkillMap({ lessons }: { lessons: LessonNodeData[] }) {
           />
         </svg>
 
-        {actOneDecorations.map((decoration) => (
-          <MapDecoration key={decoration.id} decoration={decoration} />
+        {map.decorations.map((decoration) => (
+          <MapDecoration key={decoration.id} decoration={decoration} map={map} />
         ))}
 
         {lessons.map((lesson) => (
           <div
             key={lesson.id}
             className="absolute -translate-x-1/2 -translate-y-1/2"
-            style={mapPosition(lesson.x, lesson.y)}
+            style={mapPosition(lesson.x, lesson.y, map)}
           >
             <LessonNode
               lesson={lesson}
@@ -87,6 +89,7 @@ export function SkillMap({ lessons }: { lessons: LessonNodeData[] }) {
         {selectedLesson && selectedLesson.status !== "locked" && (
           <LessonPopup
             lesson={selectedLesson}
+            map={map}
             onStartLesson={() => navigate(`/level/${selectedLesson.id}`)}
           />
         )}
