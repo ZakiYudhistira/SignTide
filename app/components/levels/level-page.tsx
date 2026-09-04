@@ -8,7 +8,7 @@ import { LevelHeader } from "./level-header";
 import { ProblemFeedback } from "./problem-feedback";
 import { ProblemRenderer } from "./problem-renderer";
 
-export function LevelPage({ level }: { level: LevelDefinition }) {
+export function LevelPage({ level, returnTo = "/level" }: { level: LevelDefinition; returnTo?: string }) {
   const navigate = useNavigate();
   const navigation = useNavigation();
   const submit = useSubmit();
@@ -49,7 +49,7 @@ export function LevelPage({ level }: { level: LevelDefinition }) {
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col bg-background text-navy-1">
-      <LevelHeader progress={progress} lives={level.lives} onExit={() => navigate("/level")} />
+      <LevelHeader progress={progress} lives={level.lives} onExit={() => navigate(returnTo)} />
 
       <main className="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-5 pb-[calc(12rem+env(safe-area-inset-bottom))] [-webkit-overflow-scrolling:touch]">
         <ProblemRenderer

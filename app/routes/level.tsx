@@ -2,9 +2,9 @@ import type { Route } from "./+types/level";
 import { data } from "react-router";
 
 import { LearningPage } from "~/components/learning/learning-page";
-import { ACT_ONE_ID, actOneCooking, actOneLessons, actOneMap, actOnePrize } from "~/data/learning/act-one";
-import { deriveLessonStatuses } from "~/features/levels/level-progression";
-import { cookAct, getUserProgression } from "~/features/levels/progression.server";
+import { registeredActs } from "~/data/learning/act-catalog";
+import { deriveActAccess, deriveLessonStatuses } from "~/features/levels/level-progression";
+import { getUserProgression } from "~/features/levels/progression.server";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -18,38 +18,33 @@ export async function loader({ request }: Route.LoaderArgs) {
     request,
     { allowAnonymous: true },
   );
+  const actAccess = deriveActAccess(registeredActs, progression);
 
   return data(
     {
-      lessons: deriveLessonStatuses(ACT_ONE_ID, actOneLessons, progression, items),
-      map: actOneMap,
-      cooking: actOneCooking,
-      prize: actOnePrize,
-      cooked: cookedActs[ACT_ONE_ID] === true,
+      sections: registeredActs.map((act) => ({
+        id: act.id,
+        label: act.label,
+        title: act.title,
+        titleColor: act.titleColor,
+        nextSectionLabel: act.nextSectionLabel,
+        lessons: deriveLessonStatuses(
+          act.id,
+          act.lessons,
+          progression,
+          items,
+          actAccess[act.id],
+        ),
+        map: act.map,
+        cooking: act.cooking,
+        cooked: act.cooking.enabled && cookedActs[act.id] === true,
+        isUnlocked: actAccess[act.id],
+      })),
     },
     { headers },
   );
 }
 
-export async function action({ request }: Route.ActionArgs) {
-  const formData = await request.formData();
-
-  if (formData.get("_intent") !== "cook") {
-    throw new Response("Invalid action", { status: 400 });
-  }
-
-  const result = await cookAct(request, actOneCooking);
-  return data({ cooked: result.cooked }, { headers: result.headers });
-}
-
 export default function LevelRoute({ loaderData }: Route.ComponentProps) {
-  return (
-    <LearningPage
-      lessons={loaderData.lessons}
-      map={loaderData.map}
-      cooking={loaderData.cooking}
-      prize={loaderData.prize}
-      cooked={loaderData.cooked}
-    />
-  );
+  return <LearningPage sections={loaderData.sections} />;
 }

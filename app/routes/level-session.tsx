@@ -1,6 +1,6 @@
 import { data, isRouteErrorResponse, useRouteError } from "react-router";
 
-import type { Route } from "./+types/level-section-1-lvl-1";
+import type { Route } from "./+types/level-session";
 
 import { LevelNotFound } from "~/components/levels/level-not-found";
 import { LevelPage } from "~/components/levels/level-page";
@@ -13,8 +13,9 @@ import {
   type SubmittedAnswers,
 } from "~/features/levels/level-session.server";
 import type { LevelActionData } from "~/models/level";
-import { ACT_ONE_ID, actOneLessons } from "~/data/learning/act-one";
+import { getActByLevelIdentifier, registeredActs } from "~/data/learning/act-catalog";
 import {
+  canAccessAct,
   canAccessLesson,
   deriveLessonStatuses,
 } from "~/features/levels/level-progression";
@@ -47,8 +48,9 @@ function parseSubmittedAnswers(value: FormDataEntryValue | null): SubmittedAnswe
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const level = getPublicLevelByIdentifier(params.levelId);
+  const act = getActByLevelIdentifier(params.levelId);
 
-  if (!level) {
+  if (!level || !act) {
     throw new Response("Level not found", {
       status: 404,
       statusText: "Not Found",
@@ -56,29 +58,55 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   }
 
   const { progression, headers } = await getUserProgression(request);
-  const lessons = deriveLessonStatuses(ACT_ONE_ID, actOneLessons, progression);
+
+  if (!canAccessAct(act.id, registeredActs, progression)) {
+    throw new Response(null, {
+      status: 302,
+      headers: { Location: `/level#${encodeURIComponent(act.id)}`, ...Object.fromEntries(headers) },
+    });
+  }
+
+  const lessons = deriveLessonStatuses(act.id, act.lessons, progression);
 
   if (!canAccessLesson(params.levelId, lessons)) {
     throw new Response(null, {
       status: 302,
-      headers: { Location: "/level", ...Object.fromEntries(headers) },
+      headers: { Location: `/level#${encodeURIComponent(act.id)}`, ...Object.fromEntries(headers) },
     });
   }
 
-  return data({ level }, { headers });
+  return data({
+    level,
+    reward: act.lessons.find((lesson) => lesson.id === params.levelId)?.reward,
+    returnTo: `/level#${encodeURIComponent(act.id)}`,
+  }, { headers });
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
+  const act = getActByLevelIdentifier(params.levelId);
+
+  if (!act) {
+    throw new Response("Level not found", { status: 404, statusText: "Not Found" });
+  }
+
   const formData = await request.formData();
   const intent = formData.get("_intent");
 
   const { progression, headers } = await getUserProgression(request);
-  const lessons = deriveLessonStatuses(ACT_ONE_ID, actOneLessons, progression);
+
+  if (!canAccessAct(act.id, registeredActs, progression)) {
+    throw new Response(null, {
+      status: 302,
+      headers: { Location: `/level#${encodeURIComponent(act.id)}`, ...Object.fromEntries(headers) },
+    });
+  }
+
+  const lessons = deriveLessonStatuses(act.id, act.lessons, progression);
 
   if (!canAccessLesson(params.levelId, lessons)) {
     throw new Response(null, {
       status: 302,
-      headers: { Location: "/level", ...Object.fromEntries(headers) },
+      headers: { Location: `/level#${encodeURIComponent(act.id)}`, ...Object.fromEntries(headers) },
     });
   }
 
@@ -127,7 +155,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   if (result.score === result.total) {
     const completion = await markLevelCompleted(
       request,
-      ACT_ONE_ID,
+      act.id,
       params.levelId,
       getLevelRewardName(params.levelId),
     );
@@ -168,12 +196,8 @@ export function ErrorBoundary() {
 
 export default function LevelSessionRoute({ loaderData, actionData }: Route.ComponentProps) {
   if (actionData?.intent === "finish-level") {
-    const reward = actOneLessons.find(
-      (lesson) => lesson.id === loaderData.level.id,
-    )?.reward;
-
-    return <LevelSummary result={actionData.result} reward={reward} />;
+    return <LevelSummary result={actionData.result} reward={loaderData.reward} returnTo={loaderData.returnTo} />;
   }
 
-  return <LevelPage level={loaderData.level} />;
+  return <LevelPage level={loaderData.level} returnTo={loaderData.returnTo} />;
 }

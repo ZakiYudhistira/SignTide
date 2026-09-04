@@ -38,6 +38,19 @@ export type ImagePromptMultipleChoiceProblem = {
   choices: MultipleChoice[];
 };
 
+export type SignToWordOrderProblem = {
+  id: string;
+  type: "sign-to-word-order";
+  eyebrow?: string;
+  prompt: string;
+  mascot: {
+    image: string;
+    alt: string;
+  };
+  imageOrder: [ChoiceVisual, ...ChoiceVisual[]];
+  wordChoices: [string, ...string[]];
+};
+
 // Extend this union when another problem template is introduced.
 export type LevelProblem =
   | ImageMultipleProblem
@@ -52,7 +65,13 @@ export type LevelDefinition = {
   problems: [LevelProblem, ...LevelProblem[]];
 };
 
-export type RewardItemName = "bread" | "veggies" | "meat";
+export type RewardItemName =
+  | "bread"
+  | "veggies"
+  | "meat"
+  | "yoghurt"
+  | "blueberry"
+  | "banana";
 
 export type LevelResult = {
   score: number;
