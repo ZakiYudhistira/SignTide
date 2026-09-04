@@ -9,17 +9,16 @@ import type { ActCookingConfig, LessonNodeData } from "~/models/learning";
 type LearningPageProps = {
   lessons: LessonNodeData[];
   cooking: ActCookingConfig;
-  cooked: boolean;
 };
 
-export function LearningPage({ lessons, cooking, cooked }: LearningPageProps) {
+export function LearningPage({ lessons, cooking }: LearningPageProps) {
   return (
     <main className="bg-background">
       <TopStatsBar />
       <ChapterBanner />
       <SkillMap lessons={lessons} />
       <RewardChecklist lessons={lessons} />
-      <ActCooking config={cooking} lessons={lessons} cooked={cooked} />
+      <ActCooking config={cooking} />
       <SectionDivider label="Kata Dasar" />
     </main>
   );

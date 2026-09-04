@@ -14,7 +14,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const { progression, items, cookedActs, headers } = await getUserProgression(
+  const { progression, items, headers } = await getUserProgression(
     request,
     { allowAnonymous: true },
   );
@@ -23,7 +23,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     {
       lessons: deriveLessonStatuses(ACT_ONE_ID, actOneLessons, progression, items),
       cooking: actOneCooking,
-      cooked: cookedActs[ACT_ONE_ID] === true,
     },
     { headers },
   );
@@ -45,7 +44,6 @@ export default function LevelRoute({ loaderData }: Route.ComponentProps) {
     <LearningPage
       lessons={loaderData.lessons}
       cooking={loaderData.cooking}
-      cooked={loaderData.cooked}
     />
   );
 }

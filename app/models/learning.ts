@@ -32,9 +32,32 @@ export type CookedActs = Record<string, boolean>;
 
 export type ActCookingConfig = {
   sectionId: string;
+  title: string;
   requiredItems: string[];
-  resultImage: string;
-  resultAlt: string;
+  kitchenImage: string;
+  kitchenImageAlt: string;
+  ingredientAnimation: {
+    targetXPercent: number;
+    targetYPercent: number;
+    entryDistancePx: number;
+    entryYOffsetPx: number;
+    ingredientSizePx: number;
+    staggerSeconds: number;
+  };
+};
+
+export type ActPrize = {
+  name: string;
+  title: string;
+  image: string;
+  alt: string;
+};
+
+export type ActDefinition = {
+  id: string;
+  lessons: LessonNodeConfig[];
+  cooking: ActCookingConfig;
+  prize: ActPrize;
 };
 
 export type MapDecorationData = {

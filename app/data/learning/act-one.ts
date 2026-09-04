@@ -1,4 +1,4 @@
-import type { ActCookingConfig, LessonNodeConfig, MapDecorationData } from "~/models/learning";
+import type { ActCookingConfig, ActPrize, LessonNodeConfig, MapDecorationData } from "~/models/learning";
 
 export const ACT_ONE_ID = "section-1";
 
@@ -87,11 +87,27 @@ export const actOneLessons: LessonNodeConfig[] = [
 
 export const actOneCooking: ActCookingConfig = {
   sectionId: ACT_ONE_ID,
+  title: "Dapur",
   requiredItems: actOneLessons.flatMap((lesson) =>
     lesson.reward ? [lesson.reward.name] : [],
   ),
-  resultImage: "/quest/sandwich.png",
-  resultAlt: "Sandwich yang telah selesai dimasak",
+  kitchenImage: "/quest/kompor.png",
+  kitchenImageAlt: "Kompor dan panci untuk memasak",
+  ingredientAnimation: {
+    targetXPercent: 50,
+    targetYPercent: 13,
+    entryDistancePx: 155,
+    entryYOffsetPx: -45,
+    ingredientSizePx: 80,
+    staggerSeconds: 0.5,
+  },
+};
+
+export const actOnePrize: ActPrize = {
+  name: "sandwich",
+  title: "Roti Lapis Sourdough!",
+  image: "/quest/sandwich.png",
+  alt: "Roti lapis sourdough yang telah selesai dimasak",
 };
 
 export const actOneDecorations: MapDecorationData[] = [
