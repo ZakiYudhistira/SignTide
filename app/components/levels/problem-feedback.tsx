@@ -7,15 +7,16 @@ type ProblemFeedbackProps = {
   isLastProblem: boolean;
   isSubmitting: boolean;
   onContinue: () => void;
+  showCorrectAnswer?: boolean;
 };
 
-export function ProblemFeedback({ grade, isLastProblem, isSubmitting, onContinue }: ProblemFeedbackProps) {
+export function ProblemFeedback({ grade, isLastProblem, isSubmitting, onContinue, showCorrectAnswer = true }: ProblemFeedbackProps) {
   const Icon = grade.isCorrect ? Check : X;
 
   return (
     <footer
       aria-live="polite"
-      className={`absolute inset-x-0 bottom-0 px-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-6 ${
+      className={`absolute inset-x-0 bottom-0 z-50 px-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-6 ${
         grade.isCorrect ? "bg-green-3 text-green-1" : "bg-red-3 text-red-1"
       }`}
     >
@@ -27,7 +28,9 @@ export function ProblemFeedback({ grade, isLastProblem, isSubmitting, onContinue
           <p className="text-title">
             {grade.isCorrect ? "Benar! Good Job" : "Solusi Yang Benar:"}
           </p>
-          {!grade.isCorrect && <p className="mt-1 text-body-large">{grade.correctAnswerLabel}</p>}
+          {!grade.isCorrect && showCorrectAnswer && (
+            <p className="mt-1 text-body-large">{grade.correctAnswerLabel}</p>
+          )}
         </div>
       </div>
 

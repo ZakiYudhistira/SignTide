@@ -18,5 +18,6 @@ export default [
   layout("routes/protected-level-layout.tsx", [
     route("level/:levelId", "routes/level-session.tsx"),
     route("debug/sequence-problem", "routes/debug-sequence-problem.tsx"),
+    route("debug/line-match", "routes/debug-line-match-problem.tsx"),
   ]),
 ] satisfies RouteConfig;

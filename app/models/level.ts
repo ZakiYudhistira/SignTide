@@ -51,6 +51,26 @@ export type SignToWordOrderProblem = {
   wordChoices: [string, ...string[]];
 };
 
+export type LineMatchPair = {
+  imageId: string;
+  answerId: string;
+};
+
+export type LineMatchProblem = {
+  id: string;
+  type: "line-match";
+  eyebrow?: string;
+  prompt: string;
+  images: Array<{
+    id: string;
+    visual: ChoiceVisual;
+  }>;
+  answers: Array<{
+    id: string;
+    label: string;
+  }>;
+};
+
 // Extend this union when another problem template is introduced.
 export type LevelProblem =
   | ImageMultipleProblem
