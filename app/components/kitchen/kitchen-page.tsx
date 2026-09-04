@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router";
+import { Link, useFetcher, useNavigate } from "react-router";
 
 import type { ActCookingConfig, ActPrize, LessonNodeConfig, UserItems } from "~/models/learning";
 
@@ -16,6 +16,8 @@ type KitchenPageProps = {
 
 export function KitchenPage({ cooking, prize, lessons, items }: KitchenPageProps) {
   const navigate = useNavigate();
+  const cookFetcher = useFetcher<{ cooked: boolean }>();
+  const handledCookResponse = useRef(false);
   const [animationRun, setAnimationRun] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showAnimatedIngredients, setShowAnimatedIngredients] = useState(false);
@@ -33,11 +35,30 @@ export function KitchenPage({ cooking, prize, lessons, items }: KitchenPageProps
   );
 
   const startCookingAnimation = () => {
-    if (!canCook || isAnimating) return;
+    if (!canCook || isAnimating || cookFetcher.state !== "idle") return;
+    handledCookResponse.current = false;
+    cookFetcher.submit(
+      { _intent: "cook" },
+      { method: "post" },
+    );
+  };
+
+  useEffect(() => {
+    if (
+      cookFetcher.state !== "idle" ||
+      !cookFetcher.data?.cooked ||
+      handledCookResponse.current
+    ) {
+      return;
+    }
+
+    handledCookResponse.current = true;
     setAnimationRun((current) => current + 1);
     setIsAnimating(true);
     setShowAnimatedIngredients(true);
-  };
+  }, [cookFetcher.data, cookFetcher.state]);
+
+  const isSavingCook = cookFetcher.state !== "idle";
 
   return (
     <main className="flex flex-1 flex-col bg-background px-5 pb-[calc(2rem+env(safe-area-inset-bottom))]">
@@ -84,11 +105,11 @@ export function KitchenPage({ cooking, prize, lessons, items }: KitchenPageProps
 
       <button
         type="button"
-        disabled={!canCook || isAnimating}
+        disabled={!canCook || isAnimating || isSavingCook}
         onClick={startCookingAnimation}
         className="mx-auto mt-8 min-h-16 w-full max-w-64 rounded-3xl bg-gray-2 px-6 text-button text-neutral-500 transition enabled:bg-green-2 enabled:text-white enabled:shadow-[0_7px_0_#7ac70c] enabled:active:translate-y-1 enabled:active:shadow-[0_3px_0_#7ac70c] disabled:cursor-not-allowed"
       >
-        {isAnimating ? "Memasak..." : "Masak"}
+        {isSavingCook ? "Menyimpan..." : isAnimating ? "Memasak..." : "Masak"}
       </button>
 
       {showCelebration && (

@@ -4,7 +4,7 @@ import type { Route } from "./+types/kitchen";
 
 import { KitchenPage } from "~/components/kitchen/kitchen-page";
 import { getActByIdentifier } from "~/data/learning/act-catalog";
-import { getUserProgression } from "~/features/levels/progression.server";
+import { cookAct, getUserProgression } from "~/features/levels/progression.server";
 
 export function meta({ loaderData }: Route.MetaArgs) {
   return [
@@ -22,6 +22,23 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
   const { items, headers } = await getUserProgression(request, { allowAnonymous: true });
   return data({ act, items }, { headers });
+}
+
+export async function action({ request, params }: Route.ActionArgs) {
+  const act = getActByIdentifier(params.sectionId);
+
+  if (!act) {
+    throw new Response("Act not found", { status: 404, statusText: "Not Found" });
+  }
+
+  const formData = await request.formData();
+
+  if (formData.get("_intent") !== "cook") {
+    throw new Response("Invalid action", { status: 400 });
+  }
+
+  const result = await cookAct(request, act.cooking);
+  return data({ cooked: result.cooked }, { headers: result.headers });
 }
 
 export function ErrorBoundary() {

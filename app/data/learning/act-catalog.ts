@@ -1,11 +1,12 @@
 import type { ActDefinition } from "~/models/learning";
 
-import { ACT_ONE_ID, actOneCooking, actOneLessons, actOnePrize } from "./act-one";
+import { ACT_ONE_ID, actOneCooking, actOneLessons, actOneMap, actOnePrize } from "./act-one";
 
 export const actCatalog = {
   [ACT_ONE_ID]: {
     id: ACT_ONE_ID,
     lessons: actOneLessons,
+    map: actOneMap,
     cooking: actOneCooking,
     prize: actOnePrize,
   },

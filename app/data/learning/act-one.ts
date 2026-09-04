@@ -1,4 +1,4 @@
-import type { ActCookingConfig, ActPrize, LessonNodeConfig, MapDecorationData } from "~/models/learning";
+import type { ActCookingConfig, ActMapConfig, ActPrize, LessonNodeConfig, MapDecorationData } from "~/models/learning";
 
 export const ACT_ONE_ID = "section-1";
 
@@ -7,9 +7,9 @@ export const actOneLessons: LessonNodeConfig[] = [
   {
     id: "section-1-lvl-1",
     x: 245,
-    y: 135,
+    y: 120,
     title: "Huruf A-E!",
-    lessonLabel: "Lesson 1/5",
+    lessonLabel: "Lesson 1/6",
     xp: 10,
     available: true,
     icon: "/Levels/active.png",
@@ -26,9 +26,9 @@ export const actOneLessons: LessonNodeConfig[] = [
   {
     id: "section-1-lvl-2",
     x: 115,
-    y: 330,
+    y: 290,
     title: "Huruf F-J",
-    lessonLabel: "Lesson 2/5",
+    lessonLabel: "Lesson 2/6",
     xp: 10,
     available: true,
     icon: "/Levels/active.png",
@@ -36,10 +36,10 @@ export const actOneLessons: LessonNodeConfig[] = [
   },
   {
     id: "section-1-lvl-3",
-    x: 225,
-    y: 530,
+    x: 250,
+    y: 460,
     title: "Huruf K-O",
-    lessonLabel: "Lesson 3/5",
+    lessonLabel: "Lesson 3/6",
     xp: 10,
     available: true,
     icon: "/Levels/inactive.png",
@@ -55,10 +55,10 @@ export const actOneLessons: LessonNodeConfig[] = [
   },
   {
     id: "section-1-lvl-4",
-    x: 300,
-    y: 720,
+    x: 120,
+    y: 630,
     title: "Huruf P-T",
-    lessonLabel: "Lesson 4/5",
+    lessonLabel: "Lesson 4/6",
     xp: 10,
     available: true,
     icon: "/Levels/inactive.png",
@@ -66,14 +66,25 @@ export const actOneLessons: LessonNodeConfig[] = [
   },
   {
     id: "section-1-lvl-5",
-    x: 145,
-    y: 910,
+    x: 270,
+    y: 800,
     title: "Huruf U-Z",
-    lessonLabel: "Lesson 5/5",
+    lessonLabel: "Lesson 5/6",
     xp: 10,
     available: true,
     icon: "/Levels/inactive.png",
     iconAlt: "Locked lesson with moon icon",
+  },
+  {
+    id: "section-1-lvl-6",
+    x: 145,
+    y: 970,
+    title: "Tantangan Akhir",
+    lessonLabel: "Lesson 6/6",
+    xp: 10,
+    available: true,
+    icon: "/Levels/trophy.png",
+    iconAlt: "Final challenge with trophy icon",
     reward: {
       name: "meat",
       image: "/quest/meat.png",
@@ -115,7 +126,7 @@ export const actOneDecorations: MapDecorationData[] = [
     id: "celebrating-mascot",
     x: 305,
     y: 250,
-    width: 180,
+    width: 220,
     image: "/signtide_character.png",
     alt: "Agus celebrating",
     zIndex: 3,
@@ -123,10 +134,17 @@ export const actOneDecorations: MapDecorationData[] = [
   {
     id: "waving-mascot",
     x: 84,
-    y: 675,
+    y: 800,
     width: 175,
     image: "/Agus/Agus_2.png",
     alt: "Agus waving",
     zIndex: 2,
   },
 ];
+
+export const actOneMap: ActMapConfig = {
+  width: 390,
+  height: 1050,
+  path: "M245 120 C130 145 285 230 115 290 C15 335 90 410 250 460 C370 505 300 585 120 630 C15 680 105 755 270 800 C370 850 305 925 145 970",
+  decorations: actOneDecorations,
+};

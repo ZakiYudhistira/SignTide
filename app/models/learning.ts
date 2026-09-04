@@ -56,8 +56,16 @@ export type ActPrize = {
 export type ActDefinition = {
   id: string;
   lessons: LessonNodeConfig[];
+  map: ActMapConfig;
   cooking: ActCookingConfig;
   prize: ActPrize;
+};
+
+export type ActMapConfig = {
+  width: number;
+  height: number;
+  path: string;
+  decorations: MapDecorationData[];
 };
 
 export type MapDecorationData = {

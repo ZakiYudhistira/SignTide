@@ -1,18 +1,18 @@
-import { MAP_HEIGHT, MAP_WIDTH } from "~/lib/learning/map-position";
-import type { LessonNodeData } from "~/models/learning";
+import type { ActMapConfig, LessonNodeData } from "~/models/learning";
 
 type LessonPopupProps = {
   lesson: LessonNodeData;
+  map: ActMapConfig;
   onStartLesson: () => void;
 };
 
-export function LessonPopup({ lesson, onStartLesson }: LessonPopupProps) {
+export function LessonPopup({ lesson, map, onStartLesson }: LessonPopupProps) {
   return (
     <div
       className="absolute z-20 w-64 -translate-x-1/2"
       style={{
-        left: `${(lesson.x / MAP_WIDTH) * 100}%`,
-        top: `${((lesson.y + 58) / MAP_HEIGHT) * 100}%`,
+        left: `${(lesson.x / map.width) * 100}%`,
+        top: `${((lesson.y + 58) / map.height) * 100}%`,
       }}
     >
       <div className="lesson-popup-enter relative rounded-3xl bg-orange-2 p-4 text-left text-white shadow-lg">

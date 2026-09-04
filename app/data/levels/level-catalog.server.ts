@@ -1,13 +1,20 @@
 import type {
-  ImageMultipleChoice,
-  ImageMultipleProblem,
-  ImagePromptMultipleChoiceProblem,
   LevelDefinition,
-  MultipleChoice,
   MultipleChoiceProblem,
   RewardItemName,
 } from "~/models/level";
-import { learningAssetUrl } from "~/utils/learning-asset.server";
+
+import { level1Problems } from "./section-1/section-1-lvl-1.server";
+import { level2Problems } from "./section-1/section-1-lvl-2.server";
+import { level3Problems } from "./section-1/section-1-lvl-3.server";
+import { level4Problems } from "./section-1/section-1-lvl-4.server";
+import { level5Problems } from "./section-1/section-1-lvl-5.server";
+import { level6Problems } from "./section-1/section-1-lvl-6.server";
+
+import type {
+  ImageMultipleProblem,
+  ImagePromptMultipleChoiceProblem,
+} from "~/models/level";
 
 export type ScoredImageMultipleProblem = ImageMultipleProblem & {
   correctChoiceId: string;
@@ -38,107 +45,6 @@ export function defineLevel<TProblems extends [ScoredLevelProblem, ...ScoredLeve
   return level;
 }
 
-function alphabetChoice(letter: string): ImageMultipleChoice {
-  const uppercaseLetter = letter.toUpperCase();
-
-  return {
-    id: letter.toLowerCase(),
-    label: "",
-    visual: {
-      kind: "image",
-      src: learningAssetUrl(`alphabet/SIBI_${uppercaseLetter}.png`),
-      alt: `Isyarat tangan untuk huruf ${uppercaseLetter}`,
-    },
-  };
-}
-
-const alphabetChoices = Array.from({ length: 26 }, (_, index) =>
-  alphabetChoice(String.fromCharCode(97 + index)),
-);
-
-function shuffleChoices<T>(choices: readonly T[], seed: string): T[] {
-  const shuffled = [...choices];
-  let state = [...seed].reduce(
-    (hash, character) => (hash * 31 + character.charCodeAt(0)) >>> 0,
-    7,
-  );
-
-  for (let index = shuffled.length - 1; index > 0; index -= 1) {
-    state = (state * 1664525 + 1013904223) >>> 0;
-    const swapIndex = state % (index + 1);
-    [shuffled[index], shuffled[swapIndex]] = [
-      shuffled[swapIndex],
-      shuffled[index],
-    ];
-  }
-
-  return shuffled;
-}
-
-function alphabetTextChoice(letter: string): MultipleChoice {
-  return { id: letter.toLowerCase(), label: letter.toUpperCase() };
-}
-
-function alphabetProblem(
-  letter: string,
-  levelLetters: string,
-  levelId: string,
-): ScoredImageMultipleProblem {
-  const choicesForLevel = alphabetChoices.filter((choice) =>
-    levelLetters.toLowerCase().includes(choice.id),
-  );
-  const shuffledDistractors = shuffleChoices(
-    choicesForLevel.filter((choice) => choice.id !== letter),
-    `${levelId}-distractors-${letter}`,
-  );
-  const choices = shuffleChoices(
-    [
-      choicesForLevel.find((choice) => choice.id === letter)!,
-      ...shuffledDistractors.slice(0, 3),
-    ],
-    `${levelId}-choices-${letter}`,
-  );
-
-  return {
-    id: `find-${levelId}-${letter}`,
-    type: "image-multiple",
-    eyebrow: "KOSAKATA BARU!",
-    prompt: `Yang manakah huruf "${letter.toUpperCase()}"?`,
-    choices,
-    correctChoiceId: letter,
-  };
-}
-
-function alphabetImagePromptProblem(
-  letter: string,
-  levelLetters: string,
-  levelId: string,
-): ScoredImagePromptMultipleChoiceProblem {
-  const availableChoices = levelLetters.split("").map(alphabetTextChoice);
-  const distractors = shuffleChoices(
-    availableChoices.filter((choice) => choice.id !== letter),
-    `${levelId}-text-distractors-${letter}`,
-  );
-  const choices = shuffleChoices(
-    [alphabetTextChoice(letter), ...distractors.slice(0, 3)],
-    `${levelId}-text-choices-${letter}`,
-  );
-  const uppercaseLetter = letter.toUpperCase();
-
-  return {
-    id: `name-${levelId}-${letter}`,
-    type: "image-prompt-multiple-choice",
-    prompt: "Huruf apakah ini?",
-    promptVisual: {
-      kind: "image",
-      src: learningAssetUrl(`alphabet/SIBI_${uppercaseLetter}.png`),
-      alt: `Isyarat tangan untuk huruf ${uppercaseLetter}`,
-    },
-    choices,
-    correctChoiceId: letter,
-  };
-}
-
 export const levelCatalog = {
   "section-1-lvl-1": {
     id: "section-1-lvl-1",
@@ -146,22 +52,14 @@ export const levelCatalog = {
     description: "Mengenal isyarat dasar untuk huruf A sampai E.",
     lives: 5,
     reward: { name: "bread" },
-    problems: [
-      alphabetProblem("a", "abcde", "section-1-lvl-1"),
-      ..."bcd".split("").map((letter) =>
-        alphabetProblem(letter, "abcde", "section-1-lvl-1"),
-      ),
-      alphabetImagePromptProblem("e", "abcde", "section-1-lvl-1"),
-    ] as [ScoredLevelProblem, ...ScoredLevelProblem[]],
+    problems: level1Problems,
   },
   "section-1-lvl-2": {
     id: "section-1-lvl-2",
     title: "Huruf F-J",
     description: "Mengenal isyarat dasar untuk huruf F sampai J.",
     lives: 5,
-    problems: "fghij".split("").map((letter) =>
-      alphabetProblem(letter, "fghij", "section-1-lvl-2"),
-    ) as [ScoredImageMultipleProblem, ...ScoredImageMultipleProblem[]],
+    problems: level2Problems,
   },
   "section-1-lvl-3": {
     id: "section-1-lvl-3",
@@ -169,28 +67,29 @@ export const levelCatalog = {
     description: "Mengenal isyarat dasar untuk huruf K sampai O.",
     lives: 5,
     reward: { name: "veggies" },
-    problems: "klmno".split("").map((letter) =>
-      alphabetProblem(letter, "klmno", "section-1-lvl-3"),
-    ) as [ScoredImageMultipleProblem, ...ScoredImageMultipleProblem[]],
+    problems: level3Problems,
   },
   "section-1-lvl-4": {
     id: "section-1-lvl-4",
     title: "Huruf P-T",
     description: "Mengenal isyarat dasar untuk huruf P sampai T.",
     lives: 5,
-    problems: "pqrst".split("").map((letter) =>
-      alphabetProblem(letter, "pqrst", "section-1-lvl-4"),
-    ) as [ScoredImageMultipleProblem, ...ScoredImageMultipleProblem[]],
+    problems: level4Problems,
   },
   "section-1-lvl-5": {
     id: "section-1-lvl-5",
     title: "Huruf U-Z",
     description: "Mengenal isyarat dasar untuk huruf U sampai Z.",
     lives: 5,
+    problems: level5Problems,
+  },
+  "section-1-lvl-6": {
+    id: "section-1-lvl-6",
+    title: "Tantangan Akhir",
+    description: "Tantangan akhir Act 1.",
+    lives: 5,
     reward: { name: "meat" },
-    problems: "uvwxyz".split("").map((letter) =>
-      alphabetProblem(letter, "uvwxyz", "section-1-lvl-5"),
-    ) as [ScoredImageMultipleProblem, ...ScoredImageMultipleProblem[]],
+    problems: level6Problems,
   },
 } satisfies Record<string, ScoredLevelDefinition>;
 

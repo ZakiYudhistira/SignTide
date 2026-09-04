@@ -168,7 +168,11 @@ export function ErrorBoundary() {
 
 export default function LevelSessionRoute({ loaderData, actionData }: Route.ComponentProps) {
   if (actionData?.intent === "finish-level") {
-    return <LevelSummary result={actionData.result} />;
+    const reward = actOneLessons.find(
+      (lesson) => lesson.id === loaderData.level.id,
+    )?.reward;
+
+    return <LevelSummary result={actionData.result} reward={reward} />;
   }
 
   return <LevelPage level={loaderData.level} />;

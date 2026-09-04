@@ -2,7 +2,7 @@ import type { Route } from "./+types/level";
 import { data } from "react-router";
 
 import { LearningPage } from "~/components/learning/learning-page";
-import { ACT_ONE_ID, actOneCooking, actOneLessons } from "~/data/learning/act-one";
+import { ACT_ONE_ID, actOneCooking, actOneLessons, actOneMap, actOnePrize } from "~/data/learning/act-one";
 import { deriveLessonStatuses } from "~/features/levels/level-progression";
 import { cookAct, getUserProgression } from "~/features/levels/progression.server";
 
@@ -14,7 +14,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const { progression, items, headers } = await getUserProgression(
+  const { progression, items, cookedActs, headers } = await getUserProgression(
     request,
     { allowAnonymous: true },
   );
@@ -22,7 +22,10 @@ export async function loader({ request }: Route.LoaderArgs) {
   return data(
     {
       lessons: deriveLessonStatuses(ACT_ONE_ID, actOneLessons, progression, items),
+      map: actOneMap,
       cooking: actOneCooking,
+      prize: actOnePrize,
+      cooked: cookedActs[ACT_ONE_ID] === true,
     },
     { headers },
   );
@@ -43,7 +46,10 @@ export default function LevelRoute({ loaderData }: Route.ComponentProps) {
   return (
     <LearningPage
       lessons={loaderData.lessons}
+      map={loaderData.map}
       cooking={loaderData.cooking}
+      prize={loaderData.prize}
+      cooked={loaderData.cooked}
     />
   );
 }
