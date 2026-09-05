@@ -8,6 +8,33 @@ import { LevelHeader } from "./level-header";
 import { ProblemFeedback } from "./problem-feedback";
 import { ProblemRenderer } from "./problem-renderer";
 
+function hasCompleteAnswer(
+  problem: LevelDefinition["problems"][number],
+  selectedChoiceId: string | null,
+) {
+  if (selectedChoiceId === null) return false;
+
+  if (problem.type === "sign-to-word-order") {
+    try {
+      const answer = JSON.parse(selectedChoiceId);
+      return Array.isArray(answer) && answer.length === problem.wordChoices.length;
+    } catch {
+      return false;
+    }
+  }
+
+  if (problem.type === "line-match") {
+    try {
+      const answer = JSON.parse(selectedChoiceId);
+      return Array.isArray(answer) && answer.length === problem.images.length;
+    } catch {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export function LevelPage({ level, returnTo = "/level" }: { level: LevelDefinition; returnTo?: string }) {
   const navigate = useNavigate();
   const navigation = useNavigation();
@@ -28,7 +55,12 @@ export function LevelPage({ level, returnTo = "/level" }: { level: LevelDefiniti
   const isSubmitting = navigation.state === "submitting";
 
   const checkAnswer = () => {
-    if (!selectedChoiceId || grade || isChecking) return;
+    if (
+      !selectedChoiceId ||
+      !hasCompleteAnswer(problem, selectedChoiceId) ||
+      grade ||
+      isChecking
+    ) return;
     gradeFetcher.submit(
       { _intent: "grade-problem", problemId: problem.id, choiceId: selectedChoiceId },
       { method: "post" },
@@ -58,19 +90,30 @@ export function LevelPage({ level, returnTo = "/level" }: { level: LevelDefiniti
           selectedChoiceId={selectedChoiceId}
           grade={grade}
           disabled={Boolean(grade) || isChecking}
-          onSelectChoice={(choiceId) =>
+          onSelectChoice={(choiceId) => {
+            if (grade || isChecking) return;
             setAnswers((current) => ({
               ...current,
               [problem.id]: choiceId,
-            }))
-          }
+            }));
+          }}
         />
       </main>
 
       {grade ? (
-        <ProblemFeedback grade={grade} isLastProblem={isLastProblem} isSubmitting={isSubmitting} onContinue={continueAfterFeedback} />
+        <ProblemFeedback
+          grade={grade}
+          isLastProblem={isLastProblem}
+          isSubmitting={isSubmitting}
+          onContinue={continueAfterFeedback}
+          showCorrectAnswer={problem.type !== "line-match"}
+        />
       ) : (
-        <LevelFooter canCheck={selectedChoiceId !== null} isChecking={isChecking} onCheck={checkAnswer} />
+        <LevelFooter
+          canCheck={hasCompleteAnswer(problem, selectedChoiceId)}
+          isChecking={isChecking}
+          onCheck={checkAnswer}
+        />
       )}
     </div>
   );

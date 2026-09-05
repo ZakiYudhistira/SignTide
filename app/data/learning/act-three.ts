@@ -3,9 +3,9 @@ import type { ActCookingFeature, ActMapConfig, LessonNodeConfig } from "~/models
 export const ACT_THREE_ID = "section-3";
 
 export const actThreeLessons: LessonNodeConfig[] = [
-  { id: "section-3-lvl-1", x: 205, y: 80, title: "Benda di Kelas", lessonLabel: "Lesson 1/4", xp: 10, available: true, icon: "/Levels/active.png", iconAlt: "Available lesson" },
-  { id: "section-3-lvl-2", x: 145, y: 200, title: "Peralatan Belajar", lessonLabel: "Lesson 2/4", xp: 10, available: true, icon: "/Levels/inactive.png", iconAlt: "Locked lesson" },
-  { id: "section-3-lvl-3", x: 210, y: 330, title: "Di Dalam Kelas", lessonLabel: "Lesson 3/4", xp: 10, available: true, icon: "/Levels/inactive.png", iconAlt: "Locked lesson" },
+  { id: "section-3-lvl-1", x: 205, y: 80, title: "Peralatan Belajar", lessonLabel: "Lesson 1/4", xp: 10, available: true, icon: "/Levels/active.png", iconAlt: "Available lesson" },
+  { id: "section-3-lvl-2", x: 145, y: 200, title: "Benda Dalam Kelas", lessonLabel: "Lesson 2/4", xp: 10, available: true, icon: "/Levels/inactive.png", iconAlt: "Locked lesson" },
+  { id: "section-3-lvl-3", x: 210, y: 330, title: "Lampu dan Lantai", lessonLabel: "Lesson 3/4", xp: 10, available: true, icon: "/Levels/inactive.png", iconAlt: "Locked lesson" },
   {
     id: "section-3-lvl-4", x: 245, y: 470, title: "Tantangan Kelas", lessonLabel: "Lesson 4/4", xp: 10, available: true, icon: "/Levels/trophy.png", iconAlt: "Final challenge with trophy icon",
     reward: { name: "blueberry", image: "/quest/blueberry.png", alt: "Blueberry reward", offsetX: 55, offsetY: 40, width: 68 },

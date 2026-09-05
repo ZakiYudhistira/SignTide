@@ -75,7 +75,9 @@ export type LineMatchProblem = {
 export type LevelProblem =
   | ImageMultipleProblem
   | MultipleChoiceProblem
-  | ImagePromptMultipleChoiceProblem;
+  | ImagePromptMultipleChoiceProblem
+  | SignToWordOrderProblem
+  | LineMatchProblem;
 
 export type LevelDefinition = {
   id: string;

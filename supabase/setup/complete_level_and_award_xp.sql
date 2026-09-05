@@ -20,34 +20,71 @@ declare
   current_items jsonb;
   level_xp integer;
   expected_reward_item text;
+  previous_section_id text;
+  previous_level_id text;
   already_completed boolean;
 begin
   if current_user_id is null then
     raise exception 'Authentication required' using errcode = '42501';
   end if;
 
-  -- XP values are controlled by the database, not by browser input.
-  level_xp := case
-    when p_section_id = 'section-1' and p_level_id = 'section-1-lvl-1' then 10
-    when p_section_id = 'section-1' and p_level_id = 'section-1-lvl-2' then 10
-    when p_section_id = 'section-1' and p_level_id = 'section-1-lvl-3' then 10
-    when p_section_id = 'section-1' and p_level_id = 'section-1-lvl-4' then 10
-    when p_section_id = 'section-1' and p_level_id = 'section-1-lvl-5' then 10
-    else null
-  end;
+  -- This catalog mirrors app/data/learning/act-one.ts through act-five.ts.
+  -- Keep each row in canonical play order: section, level, XP, reward,
+  -- prerequisite section, prerequisite level.
+  select
+    catalog.level_xp,
+    catalog.reward_item,
+    catalog.previous_section_id,
+    catalog.previous_level_id
+  into
+    level_xp,
+    expected_reward_item,
+    previous_section_id,
+    previous_level_id
+  from (
+    values
+      ('section-1'::text, 'section-1-lvl-1'::text, 10, 'bread'::text,    null::text, null::text),
+      ('section-1',       'section-1-lvl-2',       10, null,             'section-1', 'section-1-lvl-1'),
+      ('section-1',       'section-1-lvl-3',       10, 'veggies',        'section-1', 'section-1-lvl-2'),
+      ('section-1',       'section-1-lvl-4',       10, null,             'section-1', 'section-1-lvl-3'),
+      ('section-1',       'section-1-lvl-5',       10, null,             'section-1', 'section-1-lvl-4'),
+      ('section-1',       'section-1-lvl-6',       10, 'meat',           'section-1', 'section-1-lvl-5'),
 
-  if level_xp is null then
+      ('section-2',       'section-2-lvl-1',       10, null,             'section-1', 'section-1-lvl-6'),
+      ('section-2',       'section-2-lvl-2',       10, null,             'section-2', 'section-2-lvl-1'),
+      ('section-2',       'section-2-lvl-3',       10, 'yoghurt',        'section-2', 'section-2-lvl-2'),
+      ('section-2',       'section-2-lvl-4',       10, null,             'section-2', 'section-2-lvl-3'),
+      ('section-2',       'section-2-lvl-5',       10, null,             'section-2', 'section-2-lvl-4'),
+
+      ('section-3',       'section-3-lvl-1',       10, null,             'section-2', 'section-2-lvl-5'),
+      ('section-3',       'section-3-lvl-2',       10, null,             'section-3', 'section-3-lvl-1'),
+      ('section-3',       'section-3-lvl-3',       10, null,             'section-3', 'section-3-lvl-2'),
+      ('section-3',       'section-3-lvl-4',       10, 'blueberry',      'section-3', 'section-3-lvl-3'),
+
+      ('section-4',       'section-4-lvl-1',       10, null,             'section-3', 'section-3-lvl-4'),
+      ('section-4',       'section-4-lvl-2',       10, null,             'section-4', 'section-4-lvl-1'),
+      ('section-4',       'section-4-lvl-3',       10, 'banana',         'section-4', 'section-4-lvl-2'),
+
+      ('section-5',       'section-5-lvl-1',       10, null,             'section-4', 'section-4-lvl-3'),
+      ('section-5',       'section-5-lvl-2',       10, null,             'section-5', 'section-5-lvl-1'),
+      ('section-5',       'section-5-lvl-3',       10, null,             'section-5', 'section-5-lvl-2'),
+      ('section-5',       'section-5-lvl-4',       10, null,             'section-5', 'section-5-lvl-3')
+  ) as catalog(
+    section_id,
+    level_id,
+    level_xp,
+    reward_item,
+    previous_section_id,
+    previous_level_id
+  )
+  where catalog.section_id = p_section_id
+    and catalog.level_id = p_level_id;
+
+  if not found then
     raise exception 'Unknown level' using errcode = '22023';
   end if;
 
-  -- This mirrors the server-only level catalog and rejects forged reward names.
-  expected_reward_item := case
-    when p_level_id = 'section-1-lvl-1' then 'bread'
-    when p_level_id = 'section-1-lvl-3' then 'veggies'
-    when p_level_id = 'section-1-lvl-5' then 'meat'
-    else null
-  end;
-
+  -- Reject reward names forged by direct RPC calls.
   if p_reward_item is distinct from expected_reward_item then
     raise exception 'Invalid reward for level' using errcode = '22023';
   end if;
@@ -73,15 +110,12 @@ begin
     false
   );
 
-  -- Enforce the canonical prerequisite for every level after the first.
+  -- Enforce canonical lesson order, including transitions between sections.
   if not already_completed
-     and p_section_id = 'section-1'
-     and p_level_id <> 'section-1-lvl-1'
+     and previous_section_id is not null
+     and previous_level_id is not null
      and not coalesce(
-       (current_progression #>> array[
-         p_section_id,
-         'section-1-lvl-' || (split_part(p_level_id, '-lvl-', 2)::integer - 1)::text
-       ])::boolean,
+       (current_progression #>> array[previous_section_id, previous_level_id])::boolean,
        false
      ) then
     raise exception 'Previous level is not complete' using errcode = '42501';

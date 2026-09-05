@@ -1,87 +1,75 @@
-# Welcome to React Router!
+# SignTide
 
-A modern, production-ready template for building full-stack React applications using React Router.
+SignTide is an interactive Indonesian Sign Language (SIBI) learning application developed for the OPSI (Olimpiade Penelitian Siswa Indonesia) competition in Indonesia.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+The application combines visual learning, gamification, and guided progression to help users learn SIBI vocabulary and sentence structure.
 
-## Features
+## Functionality
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- Account registration, login, protected routes, and logout.
+- Guided onboarding and first-time user tutorials.
+- Act- and level-based learning progression.
+- Data-driven level configuration stored in TypeScript catalogs.
+- Multiple problem formats, including:
+  - Image-based multiple choice.
+  - Image prompt with text answers.
+  - Sign-to-word ordering.
+  - Image-to-word line matching.
+- Immediate problem feedback and level completion summaries.
+- Progression tracking and XP rewards.
+- Collectible ingredient rewards from completed levels.
+- Act-specific cooking and reward experiences.
+- Dictionary entries with visual SIBI references.
+- Responsive, mobile-first layouts inspired by the target mobile experience.
+
+## Technology Stack
+
+- React for the component-based user interface.
+- React Router Framework Mode for routing, loaders, actions, server rendering, and protected route flows.
+- TypeScript for type-safe level, problem, progression, and reward configuration.
+- Tailwind CSS v4 for responsive styling and reusable design utilities.
+- Supabase Auth for user authentication and session management.
+- Supabase Database for profiles, progression, XP, rewards, and cooking state.
+- Supabase Storage for learning and game assets.
+- Vite for development and production bundling.
+- Netlify support for deployment.
+
+## Project Guides
+
+- [Configuring acts, levels, problems, rewards, and cooking](app/data/learning/ACT-README.md)
 
 ## Getting Started
 
-### Installation
-
-Install the dependencies:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-### Development
-
-Start the development server with HMR:
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+The application will be available at `http://localhost:5173`.
 
-## Building for Production
+## Production Build
 
-Create a production build:
+Create a production build with:
 
 ```bash
 npm run build
 ```
 
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
+Run the production server with:
 
 ```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+npm start
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+## Configuration Notes
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+Learning content is configured in the `app/data` directory. New acts, levels, problems, rewards, and act-specific features should follow the conventions documented in [ACT-README.md](app/data/learning/ACT-README.md).
 
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+Supabase environment variables are required for authentication, database access, and storage asset URLs. See `.env.example` for the expected configuration.

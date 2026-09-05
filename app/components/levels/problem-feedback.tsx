@@ -31,6 +31,9 @@ export function ProblemFeedback({ grade, isLastProblem, isSubmitting, onContinue
           {!grade.isCorrect && showCorrectAnswer && (
             <p className="mt-1 text-body-large">{grade.correctAnswerLabel}</p>
           )}
+          {!grade.isCorrect && !showCorrectAnswer && (
+            <p className="sr-only">{grade.correctAnswerLabel}</p>
+          )}
         </div>
       </div>
 

@@ -46,7 +46,7 @@ export const actCatalog = {
     label: "Act 4",
     title: "Guru, Aku Perlu Bantuan Mu!",
     titleColor: "#ff77c5",
-    nextSectionLabel: "See you next time!",
+    nextSectionLabel: "Apakah Kamu Sudah Siap?",
     lessons: actFourLessons,
     map: actFourMap,
     cooking: {

@@ -7,7 +7,7 @@ export const actFourLessons: LessonNodeConfig[] = [
     id: "section-4-lvl-1", x: 145, y: 110, title: "Meminta Bantuan", lessonLabel: "Lesson 1/3", xp: 10, available: true, icon: "/Levels/active.png", iconAlt: "Available lesson",
   },
   {
-    id: "section-4-lvl-2", x: 275, y: 330, title: "Bantuan Guru", lessonLabel: "Lesson 2/3", xp: 10, available: true, icon: "/Levels/inactive.png", iconAlt: "Locked lesson",
+    id: "section-4-lvl-2", x: 275, y: 330, title: "Tidak Paham", lessonLabel: "Lesson 2/3", xp: 10, available: true, icon: "/Levels/inactive.png", iconAlt: "Locked lesson",
   },
   {
     id: "section-4-lvl-3", x: 145, y: 565, title: "Tantangan Bantuan", lessonLabel: "Lesson 3/3", xp: 10, available: true, icon: "/Levels/trophy.png", iconAlt: "Final challenge with trophy icon",
