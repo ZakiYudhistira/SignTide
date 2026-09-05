@@ -7,22 +7,22 @@ type StatItemData = {
 const stats: StatItemData[] = [
   {
     id: "streak",
-    icon: "/Agus/Agus_2.png",
+    icon: "/navbar/idle_dino.png",
     alt: "SignTide mascot",
   },
   {
     id: "fire",
-    icon: "\u{1F525}",
+    icon: "/navbar/fire.png",
     alt: "Streak",
   },
   {
     id: "sun",
-    icon: "\u2600\uFE0F",
+    icon: "/navbar/sun.png",
     alt: "Energy",
   },
   {
     id: "heart",
-    icon: "\u2764\uFE0F",
+    icon: "/navbar/heart.png",
     alt: "Hearts",
   },
 ];
@@ -30,13 +30,11 @@ const stats: StatItemData[] = [
 function StatItem({ stat }: { stat: StatItemData }) {
   return (
     <div className="flex min-w-0 items-center gap-2">
-      {stat.id === "streak" ? (
-        <img className="size-12 object-contain" src={stat.icon} alt={stat.alt} />
-      ) : (
-        <span className="text-3xl leading-none" role="img" aria-label={stat.alt}>
-          {stat.icon}
-        </span>
-      )}
+      <img
+        className={stat.id === "streak" ? "size-12 object-contain" : "size-10 object-contain"}
+        src={stat.icon}
+        alt={stat.alt}
+      />
       <span className="text-caption text-navy-3">Coming soon</span>
     </div>
   );
