@@ -1,10 +1,12 @@
-import type { ComponentType } from "react";
+import type { ReactNode } from "react";
 
 import type { LevelProblem, ProblemGrade } from "~/models/level";
 
 import { ImageMultipleProblem } from "./image-multiple-problem";
 import { ImagePromptMultipleChoiceProblem } from "./image-prompt-multiple-choice-problem";
 import { MultipleChoiceProblem } from "./multiple-choice-problem";
+import { LineMatchProblemRenderer } from "./line-match-problem-renderer";
+import { SignToWordOrderProblemView } from "./sign-to-word-order-problem";
 
 type ProblemRendererProps = {
   problem: LevelProblem;
@@ -14,31 +16,31 @@ type ProblemRendererProps = {
   disabled: boolean;
 };
 
-type SharedRendererProps = Omit<ProblemRendererProps, "problem">;
-
-type ProblemRendererRegistry = {
-  [Type in LevelProblem["type"]]: ComponentType<
-    SharedRendererProps & {
-      problem: Extract<LevelProblem, { type: Type }>;
-    }
-  >;
-};
+type RuntimeProblemRenderer = (props: ProblemRendererProps) => ReactNode;
 
 const problemRenderers = {
-  "image-multiple": ImageMultipleProblem,
-  "multiple-choice": MultipleChoiceProblem,
-  "image-prompt-multiple-choice": ImagePromptMultipleChoiceProblem,
-} satisfies ProblemRendererRegistry;
+  "image-multiple": ({ problem, ...props }) =>
+    problem.type === "image-multiple"
+      ? <ImageMultipleProblem problem={problem} {...props} />
+      : null,
+  "multiple-choice": ({ problem, ...props }) =>
+    problem.type === "multiple-choice"
+      ? <MultipleChoiceProblem problem={problem} {...props} />
+      : null,
+  "image-prompt-multiple-choice": ({ problem, ...props }) =>
+    problem.type === "image-prompt-multiple-choice"
+      ? <ImagePromptMultipleChoiceProblem problem={problem} {...props} />
+      : null,
+  "sign-to-word-order": ({ problem, ...props }) =>
+    problem.type === "sign-to-word-order"
+      ? <SignToWordOrderProblemView problem={problem} {...props} />
+      : null,
+  "line-match": ({ problem, ...props }) =>
+    problem.type === "line-match"
+      ? <LineMatchProblemRenderer problem={problem} {...props} />
+      : null,
+} satisfies Record<LevelProblem["type"], RuntimeProblemRenderer>;
 
-export function ProblemRenderer({ problem, selectedChoiceId, onSelectChoice, grade, disabled }: ProblemRendererProps) {
-  const sharedProps = { selectedChoiceId, onSelectChoice, grade, disabled };
-
-  switch (problem.type) {
-    case "image-multiple":
-      return <ImageMultipleProblem problem={problem} {...sharedProps} />;
-    case "multiple-choice":
-      return <MultipleChoiceProblem problem={problem} {...sharedProps} />;
-    case "image-prompt-multiple-choice":
-      return <ImagePromptMultipleChoiceProblem problem={problem} {...sharedProps} />;
-  }
+export function ProblemRenderer(props: ProblemRendererProps) {
+  return problemRenderers[props.problem.type](props);
 }

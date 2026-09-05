@@ -38,11 +38,46 @@ export type ImagePromptMultipleChoiceProblem = {
   choices: MultipleChoice[];
 };
 
+export type SignToWordOrderProblem = {
+  id: string;
+  type: "sign-to-word-order";
+  eyebrow?: string;
+  prompt: string;
+  mascot: {
+    image: string;
+    alt: string;
+  };
+  imageOrder: [ChoiceVisual, ...ChoiceVisual[]];
+  wordChoices: [string, ...string[]];
+};
+
+export type LineMatchPair = {
+  imageId: string;
+  answerId: string;
+};
+
+export type LineMatchProblem = {
+  id: string;
+  type: "line-match";
+  eyebrow?: string;
+  prompt: string;
+  images: Array<{
+    id: string;
+    visual: ChoiceVisual;
+  }>;
+  answers: Array<{
+    id: string;
+    label: string;
+  }>;
+};
+
 // Extend this union when another problem template is introduced.
 export type LevelProblem =
   | ImageMultipleProblem
   | MultipleChoiceProblem
-  | ImagePromptMultipleChoiceProblem;
+  | ImagePromptMultipleChoiceProblem
+  | SignToWordOrderProblem
+  | LineMatchProblem;
 
 export type LevelDefinition = {
   id: string;
@@ -52,7 +87,13 @@ export type LevelDefinition = {
   problems: [LevelProblem, ...LevelProblem[]];
 };
 
-export type RewardItemName = "bread" | "veggies" | "meat";
+export type RewardItemName =
+  | "bread"
+  | "veggies"
+  | "meat"
+  | "yoghurt"
+  | "blueberry"
+  | "banana";
 
 export type LevelResult = {
   score: number;

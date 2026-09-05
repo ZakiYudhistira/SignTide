@@ -53,12 +53,25 @@ export type ActPrize = {
   alt: string;
 };
 
+export type ActCookingFeature =
+  | {
+      enabled: true;
+      config: ActCookingConfig;
+      prize: ActPrize;
+    }
+  | {
+      enabled: false;
+    };
+
 export type ActDefinition = {
   id: string;
+  label: string;
+  title: string;
+  titleColor: string;
+  nextSectionLabel: string;
   lessons: LessonNodeConfig[];
   map: ActMapConfig;
-  cooking: ActCookingConfig;
-  prize: ActPrize;
+  cooking: ActCookingFeature;
 };
 
 export type ActMapConfig = {

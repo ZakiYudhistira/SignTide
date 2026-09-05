@@ -1,8 +1,14 @@
-export function ChapterBanner() {
+type ChapterBannerProps = {
+  label: string;
+  title: string;
+  color: string;
+};
+
+export function ChapterBanner({ label, title, color }: ChapterBannerProps) {
   return (
-    <section className="mx-5 rounded-3xl bg-blue-3 px-6 py-5 text-white">
-      <p className="text-title">Act 1</p>
-      <h1 className="mt-1 text-heading">Alfabet Dasar!</h1>
+    <section className="mx-5 rounded-3xl px-6 py-5 text-white" style={{ backgroundColor: color }}>
+      <p className="text-title">{label}</p>
+      <h1 className="mt-1 text-heading">{title}</h1>
     </section>
   );
 }

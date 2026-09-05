@@ -16,6 +16,10 @@ export default [
     route("dapur/:sectionId", "routes/kitchen.tsx"),
   ]),
   layout("routes/protected-level-layout.tsx", [
-    route("level/:levelId", "routes/level-section-1-lvl-1.tsx"),
+    route("onboarding", "routes/onboarding.tsx"),
+    route("level/:levelId", "routes/level-session.tsx"),
+    route("debug/sequence-problem", "routes/debug-sequence-problem.tsx"),
+    route("debug/line-match", "routes/debug-line-match-problem.tsx"),
   ]),
+  route("*", "routes/not-found.tsx"),
 ] satisfies RouteConfig;

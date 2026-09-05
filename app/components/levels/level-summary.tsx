@@ -10,9 +10,10 @@ type LevelSummaryReward = {
 type LevelSummaryProps = {
   result: LevelResult;
   reward?: LevelSummaryReward;
+  returnTo?: string;
 };
 
-export function LevelSummary({ result, reward }: LevelSummaryProps) {
+export function LevelSummary({ result, reward, returnTo = "/level" }: LevelSummaryProps) {
   const isPerfectScore = result.score === result.total;
 
   return (
@@ -57,7 +58,7 @@ export function LevelSummary({ result, reward }: LevelSummaryProps) {
         </>
       )}
       <Link
-        to="/level"
+        to={returnTo}
         reloadDocument
         className="welcoming-button mt-10 inline-flex items-center justify-center"
       >

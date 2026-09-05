@@ -1,10 +1,10 @@
 import { NavLink, useLocation } from "react-router";
 
 const navigationItems = [
-  { label: "Profil", to: "/profile", image: "/navbar/Home.png" },
-  { label: "Belajar", to: "/level", image: "/navbar/Leaderboard.png" },
-  { label: "Kamus", to: "/dictionary", image: "/navbar/Dictionary.png" },
-  { label: "Peringkat", to: "/leaderboard", image: "/navbar/Level.png" },
+  { label: "Profil", to: "/profile", image: "/navbar/Home.png", tutorialTarget: undefined },
+  { label: "Belajar", to: "/level", image: "/navbar/Leaderboard.png", tutorialTarget: "nav-belajar" },
+  { label: "Kamus", to: "/dictionary", image: "/navbar/Dictionary.png", tutorialTarget: "nav-kamus" },
+  { label: "Peringkat", to: "/leaderboard", image: "/navbar/Level.png", tutorialTarget: "nav-peringkat" },
 ] as const;
 
 export function Navbar() {
@@ -31,7 +31,7 @@ export function Navbar() {
           }}
         />
         {navigationItems.map((item) => (
-          <li key={item.label}>
+          <li key={item.label} data-tutorial-target={item.tutorialTarget}>
             <NavLink
               to={item.to}
               end={item.label === "Profil"}
