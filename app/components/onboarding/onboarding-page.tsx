@@ -66,29 +66,41 @@ export function OnboardingPage({ imageUrls }: OnboardingPageProps) {
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <main className="relative min-h-0 flex-1 overflow-hidden">
-        <AnimatePresence initial={false} mode="wait">
+        <AnimatePresence initial={false} mode="sync">
           <motion.div
             key={activeContent.id}
-            initial={reduceMotion ? { opacity: 0 } : { x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={reduceMotion ? { opacity: 0 } : { x: "-100%", opacity: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={reduceMotion
               ? { duration: 0.15 }
-              : { duration: 0.42, ease: [0.22, 1, 0.36, 1] }
+              : { duration: 0.3, ease: "easeInOut" }
             }
             className="absolute inset-0"
             aria-live="polite"
           >
             {activeContent.type === "image" ? (
-              <div className="flex h-full items-center justify-center px-8 py-8">
-                <img
-                  src={imageUrls[activeContent.id]}
-                  alt={activeContent.alt}
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
-                  className="max-h-full w-full rounded-sm object-contain"
-                />
+              <div className="flex h-full min-h-0 flex-col items-center justify-center gap-5 px-8 py-6 text-center">
+                <div className="flex min-h-0 w-full flex-1 items-center justify-center">
+                  <img
+                    src={imageUrls[activeContent.id]}
+                    alt={activeContent.alt}
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority="high"
+                    className="max-h-[92%] w-full rounded-sm object-contain"
+                  />
+                </div>
+
+                {activeContent.caption?.length ? (
+                  <div className="shrink-0 text-title font-semibold leading-tight">
+                    {activeContent.caption.map((line) => (
+                      <p key={line.text} className={line.textColorClass}>
+                        {line.text}
+                      </p>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             ) : (
               <activeContent.Component />
