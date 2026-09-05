@@ -8,7 +8,15 @@ import { LessonNode } from "./lesson-node";
 import { LessonPopup } from "./lesson-popup";
 import { MapDecoration } from "./map-decoration";
 
-export function SkillMap({ lessons, map }: { lessons: LessonNodeData[]; map: ActMapConfig }) {
+export function SkillMap({
+  lessons,
+  map,
+  tutorialTargetFirstLesson = false,
+}: {
+  lessons: LessonNodeData[];
+  map: ActMapConfig;
+  tutorialTargetFirstLesson?: boolean;
+}) {
   const navigate = useNavigate();
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
   const mapRef = useRef<HTMLElement>(null);
@@ -72,9 +80,12 @@ export function SkillMap({ lessons, map }: { lessons: LessonNodeData[]; map: Act
           <MapDecoration key={decoration.id} decoration={decoration} map={map} />
         ))}
 
-        {lessons.map((lesson) => (
+        {lessons.map((lesson, lessonIndex) => (
           <div
             key={lesson.id}
+            data-tutorial-target={
+              tutorialTargetFirstLesson && lessonIndex === 0 ? "levels" : undefined
+            }
             className="absolute -translate-x-1/2 -translate-y-1/2"
             style={mapPosition(lesson.x, lesson.y, map)}
           >

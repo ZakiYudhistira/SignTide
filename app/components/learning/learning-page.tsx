@@ -4,7 +4,10 @@ import { SkillMap } from "./skill-map";
 import { TopStatsBar } from "./top-stats-bar";
 import { RewardChecklist } from "./reward-checklist";
 import { ActCooking } from "./act-cooking";
+import { TutorialOverlay } from "~/components/tutorial/tutorial-overlay";
+import { LEVEL_TUTORIAL_STEPS } from "~/data/tutorial/level-tutorial";
 import type { ActCookingFeature, ActMapConfig, LessonNodeData } from "~/models/learning";
+import { useSearchParams } from "react-router";
 
 type LearningPageProps = {
   sections: Array<{
@@ -22,10 +25,20 @@ type LearningPageProps = {
 };
 
 export function LearningPage({ sections }: LearningPageProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tutorialIsOpen = searchParams.get("tutorial") === "true";
+
+  const closeTutorial = () => {
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.delete("tutorial");
+    setSearchParams(nextSearchParams, { replace: true });
+  };
+
   return (
-    <main className="bg-background">
-      <TopStatsBar />
-      {sections.map((section) => (
+    <>
+      <main className="bg-background">
+        <TopStatsBar />
+        {sections.map((section, sectionIndex) => (
         <section
           key={section.id}
           id={section.id}
@@ -43,7 +56,11 @@ export function LearningPage({ sections }: LearningPageProps) {
             }
           >
             <ChapterBanner label={section.label} title={section.title} color={section.titleColor} />
-            <SkillMap lessons={section.lessons} map={section.map} />
+            <SkillMap
+              lessons={section.lessons}
+              map={section.map}
+              tutorialTargetFirstLesson={sectionIndex === 0}
+            />
             <RewardChecklist lessons={section.lessons} />
             {section.cooking.enabled && (
               section.cooked ? (
@@ -59,7 +76,12 @@ export function LearningPage({ sections }: LearningPageProps) {
             <SectionDivider label={section.nextSectionLabel} />
           </div>
         </section>
-      ))}
-    </main>
+        ))}
+      </main>
+
+      {tutorialIsOpen && (
+        <TutorialOverlay steps={LEVEL_TUTORIAL_STEPS} onComplete={closeTutorial} />
+      )}
+    </>
   );
 }

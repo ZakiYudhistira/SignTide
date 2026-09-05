@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 import { supabase } from "~/lib/supabase/client";
 import { LoadingScreen } from "~/components/ui/loading-screen";
@@ -10,10 +10,12 @@ type AuthenticatedRouteProps = {
 
 export function AuthenticatedRoute({ children }: AuthenticatedRouteProps) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
+    setIsCheckingAuth(true);
 
     const redirectToLogin = () => {
       if (isMounted) {
@@ -26,6 +28,22 @@ export function AuthenticatedRoute({ children }: AuthenticatedRouteProps) {
 
       if (error || !data.user) {
         redirectToLogin();
+        return;
+      }
+
+      const { data: progress, error: progressError } = await supabase
+        .schema("public")
+        .from("progress")
+        .select("onboarding")
+        .eq("id", data.user.id)
+        .maybeSingle();
+
+      const needsOnboarding = progressError || progress?.onboarding !== false;
+
+      if (needsOnboarding && pathname !== "/onboarding") {
+        if (isMounted) {
+          navigate("/onboarding", { replace: true });
+        }
         return;
       }
 
@@ -48,7 +66,7 @@ export function AuthenticatedRoute({ children }: AuthenticatedRouteProps) {
       isMounted = false;
       authSubscription.subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [navigate, pathname]);
 
   if (isCheckingAuth) {
     return <LoadingScreen show />;
